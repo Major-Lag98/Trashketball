@@ -38,7 +38,8 @@ public class GameStateMachine : MonoBehaviour
     Vector2 Direction;
     public float Scaler = 0.1f;
 
-
+    // line renderer for waiting
+    public LineRenderer lineRenderer;
 
     // Enum for the different states
     public enum GameState
@@ -112,27 +113,17 @@ public class GameStateMachine : MonoBehaviour
                         Vector3 directionOfForce = (BallToFlick.transform.up + BallToFlick.transform.forward * 0.5f).normalized;
                         BallToFlick.GetComponent<Rigidbody>().AddForce(directionOfForce * Direction.magnitude * Scaler);
                         ChangeState(GameState.Waiting);
+                        // clear the line renderer
+                        lineRenderer.positionCount = 0;
                         break;
                 }
-
-                /*if (Input.GetMouseButton(0))
-                {
-                    shotLocation = MainCamera.transform.position;
-                }
-                if (Input.GetMouseButtonUp(0))
-                {
-                    GameObject BallToFlick = GameObject.FindGameObjectWithTag("Ball");
-                    BallToFlick.transform.parent = null;
-                    BallToFlick.GetComponent<Rigidbody>().useGravity = true;
-                    BallToFlick.GetComponent<Rigidbody>().isKinematic = false;
-                    // add an upwards force and a forward force to the ball
-                    Vector3 directionOfForce = (BallToFlick.transform.up + BallToFlick.transform.forward * 0.5f).normalized;
-                    BallToFlick.GetComponent<Rigidbody>().AddForce(directionOfForce * 250);
-                    ChangeState(GameState.Waiting);
-                }*/
                 break;
 
             case GameState.Waiting:
+                // every frame crate a point at the balls location and add it to the line renderer
+                lineRenderer.positionCount++;
+                lineRenderer.SetPosition(lineRenderer.positionCount - 1, GameObject.FindGameObjectWithTag("Ball").transform.position);
+
                 // if the ball is not moving or X seconds have passed since waiting state has started, change the state back to flicking
                 currentTime += Time.deltaTime;
                 if (currentTime >= maxTime)
@@ -217,10 +208,12 @@ public class GameStateMachine : MonoBehaviour
         FlickingTXT.SetActive(false);
         placeObjectOnPlane.BTNEnablePlancement();
         EnablePlacingBTN.SetActive(false);
+        
     }
 
     void ToFlicking()
     {
+        
         // if the ball exists for some reason destroy it
         GameObject BallToDestroy = GameObject.FindGameObjectWithTag("Ball");
         if (BallToDestroy != null)
