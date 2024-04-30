@@ -2811,6 +2811,7 @@ MonoBehaviour:
   MainCamera: {fileID: 1984438179}
   shotLocation: {x: 0, y: 0, z: 0}
   maxTime: 3
+  Scaler: 0.3
 --- !u!4 &1655247571
 Transform:
   m_ObjectHideFlags: 0

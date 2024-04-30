@@ -33,6 +33,12 @@ public class GameStateMachine : MonoBehaviour
     float currentTime = 0;
     public float maxTime = 3;
 
+    // Touching
+    Vector2 StartPos;
+    Vector2 Direction;
+    public float Scaler = 0.1f;
+
+
 
     // Enum for the different states
     public enum GameState
@@ -79,7 +85,37 @@ public class GameStateMachine : MonoBehaviour
         {
             // if the ball is flicked, track the finger location and when the finger is lifted, apply force to the ball and change the state to waiting
             case GameState.Flicking:
-                if (Input.GetMouseButton(0))
+
+
+
+                // if the user touches the screen get the location of the touch and record it into a list
+                // if the user lets go of the screen, calculate the force
+                Touch touch = Input.GetTouch(0);
+
+                switch (touch.phase)
+                {
+                    case TouchPhase.Began:
+                        // shotLocation = MainCamera.transform.position;
+                           StartPos = touch.position;
+                        break;
+
+                    case TouchPhase.Moved:
+                        Direction = touch.position - StartPos;
+                        break;
+
+                    case TouchPhase.Ended:
+                        GameObject BallToFlick = GameObject.FindGameObjectWithTag("Ball");
+                        BallToFlick.transform.parent = null;
+                        BallToFlick.GetComponent<Rigidbody>().useGravity = true;
+                        BallToFlick.GetComponent<Rigidbody>().isKinematic = false;
+                        // add an upwards force and a forward force to the ball
+                        Vector3 directionOfForce = (BallToFlick.transform.up + BallToFlick.transform.forward * 0.5f).normalized;
+                        BallToFlick.GetComponent<Rigidbody>().AddForce(directionOfForce * Direction.magnitude * Scaler);
+                        ChangeState(GameState.Waiting);
+                        break;
+                }
+
+                /*if (Input.GetMouseButton(0))
                 {
                     shotLocation = MainCamera.transform.position;
                 }
@@ -93,8 +129,9 @@ public class GameStateMachine : MonoBehaviour
                     Vector3 directionOfForce = (BallToFlick.transform.up + BallToFlick.transform.forward * 0.5f).normalized;
                     BallToFlick.GetComponent<Rigidbody>().AddForce(directionOfForce * 250);
                     ChangeState(GameState.Waiting);
-                }
+                }*/
                 break;
+
             case GameState.Waiting:
                 // if the ball is not moving or X seconds have passed since waiting state has started, change the state back to flicking
                 currentTime += Time.deltaTime;
