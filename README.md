@@ -1,6 +1,6 @@
 # Trashketball Prototype
-**Created by:** Levi Watlington, Hunter Kilgore, and Alden Smith <br>
-**NAU CS499 Spring 2024** <br>
+**Created by:** <ul><li>Levi Watlington</li> <li>Hunter Kilgore</li> <li>Alden Smith</li> </ul>
+**NAU CS499 Spring 2024** <br><br>
 Estimated 12-15 hours of work from start to finish.
 
 # Video Demo
