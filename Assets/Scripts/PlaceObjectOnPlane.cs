@@ -11,7 +11,6 @@ public class PlaceObjectOnPlane : MonoBehaviour
 {
     [SerializeField]
     GameObject placedPrefab;
-    GameObject spawnedObject;
     ARRaycastManager raycaster;
 
      public GameStateMachine GameStateMachine;
@@ -41,9 +40,11 @@ public class PlaceObjectOnPlane : MonoBehaviour
             if (EnablePlacement)
             {
                 // instantiate the prefab at the hit position and rotation
-                spawnedObject = Instantiate(placedPrefab, hitPose.position, hitPose.rotation);
+                Instantiate(placedPrefab, hitPose.position, hitPose.rotation);
                 EnablePlacement = false;
-                GameStateMachine.ChangeState(GameStateMachine.GameState.Flicking);
+                // call wait coroutine
+                StartCoroutine("WaitForXSeconds", 0.3f);
+                
             }
         }
     }
@@ -51,6 +52,13 @@ public class PlaceObjectOnPlane : MonoBehaviour
     public void BTNEnablePlancement()
     {
         EnablePlacement = true;
+    }
+    
+    // this coroutine prevents the player from throwing the ball accidently when placing an object
+    IEnumerator WaitForXSeconds(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        GameStateMachine.ChangeState(GameStateMachine.GameState.Flicking);
     }
 
 }
